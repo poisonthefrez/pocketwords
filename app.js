@@ -1,5 +1,6 @@
 // ========== HELPERS ==========
 function $(id) { return document.getElementById(id); }
+
 function shuffle(arr) {
     arr = arr.slice();
     for (let i = arr.length - 1; i > 0; i--) {
@@ -8,24 +9,37 @@ function shuffle(arr) {
     }
     return arr;
 }
+
 function saveFavs(key, favs) {
     localStorage.setItem('efs_favs_' + key, JSON.stringify(favs));
 }
+
 function loadFavs(key) {
-    try {
-        return JSON.parse(localStorage.getItem('efs_favs_' + key)) || [];
-    } catch { return []; }
+    try { return JSON.parse(localStorage.getItem('efs_favs_' + key)) || []; }
+    catch { return []; }
 }
+
 function saveLastIdx(key, idx) {
     localStorage.setItem('efs_lastidx_' + key, idx);
 }
+
 function loadLastIdx(key) {
     const v = localStorage.getItem('efs_lastidx_' + key);
     return v !== null ? parseInt(v, 10) : 0;
 }
+
 function focusFirstButton(parent) {
     const btn = parent.querySelector('button, [tabindex="0"]');
     if (btn) btn.focus();
+}
+
+function pluralize(count, one, few, many) {
+    count = Math.abs(count) % 100;
+    const n1 = count % 10;
+    if (count > 10 && count < 20) return many;
+    if (n1 > 1 && n1 < 5) return few;
+    if (n1 === 1) return one;
+    return many;
 }
 
 // ========== UI STATE ==========
@@ -37,52 +51,82 @@ function showScreen(id) {
     currentScreen = id;
     setTimeout(() => $(id).focus(), 0);
 }
+
 function showModal(id) {
     $(id).classList.remove('hidden');
     setTimeout(() => $(id).focus(), 0);
 }
+
 function hideModal(id) {
     $(id).classList.add('hidden');
 }
 
+// ========== INIT ==========
 window.addEventListener('DOMContentLoaded', () => {
-    const splash = document.getElementById('splash');
-    const mainMenu = document.getElementById('mainMenu');
+    const splash = $('splash');
+    const mainMenu = $('mainMenu');
+    const burgerBtn = $('burgerBtn');
+    const burgerMenu = $('burgerMenu');
+    const burgerLessons = $('burgerLessons');
+    const burgerMain = $('burgerMain');
+    const burgerExit = $('burgerExit');
+    const btnCards = $('btnCards');
 
-    // Через 2s показываем начало fade splash
+    // Splash fade
     setTimeout(() => {
-        // mainMenu одновременно подготавливаем
         mainMenu.classList.remove('hidden');
-        setTimeout(() => mainMenu.classList.add('visible'), 50); // лёгкая задержка для transition
+        setTimeout(() => mainMenu.classList.add('visible'), 50);
+        setTimeout(() => { splash.style.display = 'none'; }, 1500);
+    }, 2000);
 
-        // После завершения fade, скрываем splash
-        setTimeout(() => {
-            splash.style.display = 'none';
-        }, 1500); // совпадает с duration анимации splash
-    }, 2000); // delay перед splash fade
+    // ========== BURGER ==========
+    burgerBtn.addEventListener('click', () => {
+        burgerMenu.style.display = burgerMenu.style.display === 'flex' ? 'none' : 'flex';
+    });
+
+    // Главный меню - карточки
+    btnCards.addEventListener('click', () => openLessonPicker('cards'));
+    btnCards.addEventListener('touchstart', (e) => { e.preventDefault(); openLessonPicker('cards'); });
+
+    // Бургер - карточки
+    burgerLessons.addEventListener('click', () => {
+        openLessonPicker('cards');
+        burgerMenu.style.display = 'none';
+    });
+    burgerLessons.addEventListener('touchstart', (e) => {
+        e.preventDefault();
+        openLessonPicker('cards');
+        burgerMenu.style.display = 'none';
+    });
+
+    // Бургер - главная
+    burgerMain.addEventListener('click', () => {
+        showScreen('mainMenu');
+        burgerMenu.style.display = 'none';
+    });
+
+    // Бургер - выход
+    burgerExit.addEventListener('click', () => {
+        window.close();
+    });
 });
 
-
-
 // ========== MAIN MENU ==========
-$('btnCards').onclick = () => openLessonPicker('cards');
 $('btnTest').onclick = () => openLessonPicker('test');
 $('btnLessons').onclick = () => showLessons();
 
+let lessonPickerMode = null;
 function openLessonPicker(mode) {
     renderLessonList(mode);
     showModal('lessonPicker');
     lessonPickerMode = mode;
 }
-let lessonPickerMode = null;
+
 function renderLessonList(mode) {
     const list = $('lessonList');
     list.innerHTML = '';
     const keys = Object.keys(LESSONS);
-    if (!keys.length) {
-        $('noLessons').classList.remove('hidden');
-        return;
-    }
+    if (!keys.length) { $('noLessons').classList.remove('hidden'); return; }
     $('noLessons').classList.add('hidden');
     keys.forEach(key => {
         const l = LESSONS[key];
@@ -96,6 +140,7 @@ function renderLessonList(mode) {
         list.appendChild(li);
     });
 }
+
 $('pickerCancel').onclick = () => hideModal('lessonPicker');
 $('lessonPicker').addEventListener('keydown', e => {
     if (e.key === 'Escape') hideModal('lessonPicker');
@@ -105,8 +150,7 @@ $('lessonPicker').addEventListener('keydown', e => {
 let cardsState = null;
 function startCards(lessonKey) {
     const lesson = LESSONS[lessonKey];
-    if (!lesson) { alert('Lesson not found.'); showScreen('mainMenu'); return; }
-    if (!lesson.items.length) { alert('No words in this lesson.'); showScreen('mainMenu'); return; }
+    if (!lesson || !lesson.items.length) { showScreen('mainMenu'); return; }
     cardsState = {
         lessonKey,
         idx: loadLastIdx(lessonKey),
@@ -117,6 +161,7 @@ function startCards(lessonKey) {
     renderCard();
     showScreen('cards');
 }
+
 function renderCard() {
     const { lessonKey, idx, flipped, favs } = cardsState;
     const lesson = LESSONS[lessonKey];
@@ -127,22 +172,26 @@ function renderCard() {
     $('favBtn').classList.toggle('fav', favs.includes(idx));
     saveLastIdx(lessonKey, idx);
 }
+
 function flipCard() {
     cardsState.flipped = !cardsState.flipped;
     renderCard();
 }
+
 function nextCard() {
     const lesson = LESSONS[cardsState.lessonKey];
     cardsState.idx = (cardsState.idx + 1) % lesson.items.length;
     cardsState.flipped = false;
     renderCard();
 }
+
 function prevCard() {
     const lesson = LESSONS[cardsState.lessonKey];
     cardsState.idx = (cardsState.idx - 1 + lesson.items.length) % lesson.items.length;
     cardsState.flipped = false;
     renderCard();
 }
+
 function toggleFav() {
     const { lessonKey, idx, favs } = cardsState;
     const i = favs.indexOf(idx);
@@ -151,29 +200,32 @@ function toggleFav() {
     saveFavs(lessonKey, favs);
     renderCard();
 }
+
 $('card').onclick = flipCard;
 $('card').addEventListener('keydown', e => {
     if (e.key === ' ' || e.key === 'Enter') { e.preventDefault(); flipCard(); }
 });
+
 $('prevBtn').onclick = prevCard;
 $('nextBtn').onclick = nextCard;
 $('favBtn').onclick = toggleFav;
 $('cardsBack').onclick = () => { cardsState = null; showScreen('mainMenu'); };
+
 document.addEventListener('keydown', e => {
     if (currentScreen === 'cards') {
-        if (e.key === 'ArrowLeft') { prevCard(); }
-        else if (e.key === 'ArrowRight') { nextCard(); }
-        else if (e.key === ' ' || e.key === 'Enter') { flipCard(); }
-        else if (e.key === 'Escape') { $('cardsBack').click(); }
+        if (e.key === 'ArrowLeft') prevCard();
+        else if (e.key === 'ArrowRight') nextCard();
+        else if (e.key === ' ' || e.key === 'Enter') flipCard();
+        else if (e.key === 'Escape') $('cardsBack').click();
     }
 });
 
 // ========== TEST ==========
 let testState = null;
+
 function startTest(lessonKey) {
     const lesson = LESSONS[lessonKey];
-    if (!lesson) { alert('Lesson not found.'); showScreen('mainMenu'); return; }
-    if (!lesson.items.length) { alert('No words in this lesson.'); showScreen('mainMenu'); return; }
+    if (!lesson || !lesson.items.length) { showScreen('mainMenu'); return; }
     testState = {
         lessonKey,
         order: shuffle([...lesson.items.keys()]),
@@ -184,6 +236,7 @@ function startTest(lessonKey) {
     renderTestQuestion();
     showScreen('test');
 }
+
 function renderTestQuestion() {
     const state = testState;
     const lesson = LESSONS[state.lessonKey];
@@ -191,16 +244,17 @@ function renderTestQuestion() {
     const idx = state.order[state.cur];
     const qItem = lesson.items[idx];
     $('question').innerHTML = `Как переводиться <u>${qItem.ru}</u> ?`;
-    // Build 3 options: correct + 2 random
+
     let variants = [qItem.en];
     let pool = lesson.items.map(it => it.en).filter((v, i) => i !== idx);
     pool = shuffle(pool);
     while (variants.length < 3 && pool.length) variants.push(pool.shift());
     while (variants.length < 3) variants.push(variants[0]);
     variants = shuffle(variants);
+
     const optionsWrap = $('options');
     optionsWrap.innerHTML = '';
-    variants.forEach((opt, i) => {
+    variants.forEach(opt => {
         const b = document.createElement('button');
         b.textContent = opt;
         b.tabIndex = 0;
@@ -209,10 +263,10 @@ function renderTestQuestion() {
     });
     focusFirstButton(optionsWrap);
 }
+
 function handleAnswer(chosen, correct, idx) {
     const state = testState;
     const isCorrect = chosen === correct;
-    // highlight
     const buttons = Array.from($('options').children);
     buttons.forEach(b => {
         if (b.textContent === correct) b.disabled = true;
@@ -221,35 +275,27 @@ function handleAnswer(chosen, correct, idx) {
         b.disabled = true;
     });
     state.results.push({ idx, correct: isCorrect, chosen });
-    setTimeout(() => {
-        state.cur += 1;
-        renderTestQuestion();
-    }, 1000);
+    setTimeout(() => { state.cur += 1; renderTestQuestion(); }, 1000);
 }
+
 function finishTest() {
     const state = testState;
     if (!state) return;
-
     const lesson = LESSONS[state.lessonKey];
     const wrap = $('resultSummary');
     wrap.innerHTML = '';
 
     const total = state.results.length;
     let score = 0;
-
-    // создаём контейнер для списка
     const container = document.createElement('div');
     container.style.maxWidth = '700px';
     container.style.margin = '0 auto';
 
-    // проходим по каждому ответу
     state.results.forEach(r => {
         const item = lesson.items[r.idx];
-        const isCorrect = r.correct;
-        if (isCorrect) score++;
-
+        if (r.correct) score++;
         const div = document.createElement('div');
-        div.className = 'result-item ' + (isCorrect ? 'correct' : 'wrong');
+        div.className = 'result-item ' + (r.correct ? 'correct' : 'wrong');
         div.style.background = 'rgba(255,255,255,0.05)';
         div.style.borderRadius = '10px';
         div.style.padding = '0.8rem 1rem';
@@ -257,7 +303,7 @@ function finishTest() {
         div.style.fontSize = '1rem';
         div.style.color = '#fff';
         div.style.lineHeight = '1.4';
-        div.style.borderLeft = isCorrect ? '6px solid #4caf50' : '6px solid #f44336';
+        div.style.borderLeft = r.correct ? '6px solid #4caf50' : '6px solid #f44336';
         div.innerHTML = `
             <div class="question">${item.ru}</div>
             <div class="user-answer">Ти ответила: ${r.chosen}</div>
@@ -266,7 +312,6 @@ function finishTest() {
         container.appendChild(div);
     });
 
-    // выводим результат вверху
     const p = document.createElement('p');
     p.style.fontSize = '1.5rem';
     p.style.fontWeight = '600';
@@ -284,39 +329,24 @@ function finishTest() {
 $('testBack').onclick = () => { testState = null; showScreen('mainMenu'); };
 $('retryBtn').onclick = () => {
     if (!testState) {
-        // re-run last test
         const lessonKey = $('resultLessonName').textContent;
         const key = Object.keys(LESSONS).find(k => LESSONS[k].name === lessonKey);
         if (key) startTest(key);
         else showScreen('mainMenu');
     }
 };
-
 $('resultBack').onclick = () => showScreen('mainMenu');
+
 document.addEventListener('keydown', e => {
     if (currentScreen === 'test') {
         if (['1', '2', '3'].includes(e.key)) {
             const btns = $('options').children;
             const idx = parseInt(e.key, 10) - 1;
             if (btns[idx]) btns[idx].click();
-        } else if (e.key === 'Escape') {
-            $('testBack').click();
-        }
+        } else if (e.key === 'Escape') $('testBack').click();
     }
-    if (currentScreen === 'testResult' && e.key === 'Escape') {
-        $('resultBack').click();
-    }
+    if (currentScreen === 'testResult' && e.key === 'Escape') $('resultBack').click();
 });
-
-// ========== HELPERS ==========
-function pluralize(count, one, few, many) {
-    count = Math.abs(count) % 100;
-    const n1 = count % 10;
-    if (count > 10 && count < 20) return many;
-    if (n1 > 1 && n1 < 5) return few;
-    if (n1 === 1) return one;
-    return many;
-}
 
 // ========== LESSONS ==========
 function showLessons() {
@@ -324,14 +354,11 @@ function showLessons() {
     list.innerHTML = '';
     const keys = Object.keys(LESSONS);
     if (!keys.length) {
-        const li = document.createElement('li');
-        li.textContent = 'No lessons available.';
-        list.appendChild(li);
+        const li = document.createElement('li'); li.textContent = 'No lessons available.'; list.appendChild(li);
     } else {
         keys.forEach(key => {
             const l = LESSONS[key];
             const countText = `${l.items.length} ${pluralize(l.items.length, 'слово', 'слова', 'слов')}`;
-
             const li = document.createElement('li');
             li.innerHTML = `
                 <div class="lesson-header">
@@ -341,27 +368,19 @@ function showLessons() {
                 <button class="vocab-btn">Словарик 📖</button>
                 <ul class="vocab-list hidden"></ul>
             `;
-
-            // Получаем кнопку и UL
             const btn = li.querySelector('.vocab-btn');
             const vocabList = li.querySelector('.vocab-list');
-
-            // Заполняем список слов
             l.items.forEach(item => {
                 const wordLi = document.createElement('li');
                 wordLi.innerHTML = `<span class="ru">${item.ru}</span> — <span class="en">${item.en}</span>`;
                 vocabList.appendChild(wordLi);
             });
-
-            // Кнопка разворачивает/скрывает словарь
             btn.onclick = () => vocabList.classList.toggle('hidden');
-
             list.appendChild(li);
         });
     }
     showScreen('lessons');
 }
-
 $('lessonsBack').onclick = () => showScreen('mainMenu');
 
 // ========== ACCESSIBILITY ==========
@@ -369,33 +388,5 @@ document.addEventListener('keydown', e => {
     if (currentScreen === 'mainMenu' && e.key === 'Escape') showScreen('splash');
 });
 
-// ========== INIT ==========
+// Показываем splash при загрузке
 showScreen('splash');
-
-
-const burgerBtn = document.getElementById('burgerBtn');
-const burgerMenu = document.getElementById('burgerMenu');
-
-burgerBtn.addEventListener('click', () => {
-    if (burgerMenu.style.display === 'none') {
-        burgerMenu.style.display = 'flex';
-    }
-    else {
-        burgerMenu.style.display = 'none';
-    }
-});
-
-// Простейшие действия кнопок
-document.getElementById('burgerMain').addEventListener('click', () => {
-    showScreen('mainMenu');
-    burgerMenu.style.display = 'none';
-});
-
-document.getElementById('burgerLessons').addEventListener('click', () => {
-    openLessonPicker('cards');
-    burgerMenu.style.display = 'none';
-});
-
-document.getElementById('burgerExit').addEventListener('click', () => {
-    window.close();
-});

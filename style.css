@@ -116,7 +116,7 @@ section,
   opacity: 0;
   transform: translateY(-20px); /* стартовая позиция выше */
   animation: slideDown 0.4s forwards; /* запускается автоматически */
-}
+} 
 
 @keyframes slideDown {
   0% {
