@@ -330,8 +330,8 @@ function showLessons() {
     } else {
         keys.forEach(key => {
             const l = LESSONS[key];
-            const countText = `${l.items.length} ${pluralize(l.items.length,'слово','слова','слов')}`;
-            
+            const countText = `${l.items.length} ${pluralize(l.items.length, 'слово', 'слова', 'слов')}`;
+
             const li = document.createElement('li');
             li.innerHTML = `
                 <div class="lesson-header">
@@ -341,7 +341,7 @@ function showLessons() {
                 <button class="vocab-btn">Словарик 📖</button>
                 <ul class="vocab-list hidden"></ul>
             `;
-            
+
             // Получаем кнопку и UL
             const btn = li.querySelector('.vocab-btn');
             const vocabList = li.querySelector('.vocab-list');
@@ -371,3 +371,31 @@ document.addEventListener('keydown', e => {
 
 // ========== INIT ==========
 showScreen('splash');
+
+
+const burgerBtn = document.getElementById('burgerBtn');
+const burgerMenu = document.getElementById('burgerMenu');
+
+burgerBtn.addEventListener('click', () => {
+    if (burgerMenu.style.display === 'none') {
+        burgerMenu.style.display = 'flex';
+    }
+    else {
+        burgerMenu.style.display = 'none';
+    }
+});
+
+// Простейшие действия кнопок
+document.getElementById('burgerMain').addEventListener('click', () => {
+    showScreen('mainMenu');
+    burgerMenu.style.display = 'none';
+});
+
+document.getElementById('burgerLessons').addEventListener('click', () => {
+    openLessonPicker('cards');
+    burgerMenu.style.display = 'none';
+});
+
+document.getElementById('burgerExit').addEventListener('click', () => {
+    window.close();
+});
