@@ -69,7 +69,7 @@ window.addEventListener('DOMContentLoaded', () => {
     const burgerMenu = $('burgerMenu');
     const burgerLessons = $('burgerLessons');
     const burgerMain = $('burgerMain');
-    const burgerExit = $('burgerExit');
+    const burgerTest = $('burgerTest');
     const btnCards = $('btnCards');
 
     // Splash fade
@@ -90,12 +90,12 @@ window.addEventListener('DOMContentLoaded', () => {
 
     // Бургер - карточки
     burgerLessons.addEventListener('click', () => {
-        openLessonPicker('cards');
+        showLessons();
         burgerMenu.style.display = 'none';
     });
     burgerLessons.addEventListener('touchstart', (e) => {
         e.preventDefault();
-        openLessonPicker('cards');
+        showLessons();
         burgerMenu.style.display = 'none';
     });
 
@@ -105,10 +105,10 @@ window.addEventListener('DOMContentLoaded', () => {
         burgerMenu.style.display = 'none';
     });
 
-    // Бургер - выход
-    burgerExit.addEventListener('click', () => {
-        window.close();
-    });
+    burgerTest.addEventListener('click', () => {
+        openLessonPicker('test');
+        burgerMenu.style.display = 'none';
+    })
 });
 
 // ========== MAIN MENU ==========
