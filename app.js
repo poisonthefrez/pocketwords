@@ -328,13 +328,19 @@ function finishTest() {
 
 $('testBack').onclick = () => { testState = null; showScreen('mainMenu'); };
 $('retryBtn').onclick = () => {
-    if (!testState) {
-        const lessonKey = $('resultLessonName').textContent;
-        const key = Object.keys(LESSONS).find(k => LESSONS[k].name === lessonKey);
-        if (key) startTest(key);
-        else showScreen('mainMenu');
+    // Если тест завершен, запускаем последний урок заново
+    let lastLessonKey = null;
+    if (testState) lastLessonKey = testState.lessonKey;
+    else {
+        const lessonName = $('testLessonName').textContent || $('resultLessonName')?.textContent;
+        if (lessonName) {
+            lastLessonKey = Object.keys(LESSONS).find(k => LESSONS[k].name === lessonName);
+        }
     }
+
+    if (lastLessonKey) startTest(lastLessonKey);
 };
+
 $('resultBack').onclick = () => showScreen('mainMenu');
 
 document.addEventListener('keydown', e => {
