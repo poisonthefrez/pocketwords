@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>PocketWords</title>
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@300..700&display=swap" rel="stylesheet">
+</head>
+
+<body>
+    <!-- Splash Screen -->
+    <!-- Splash Screen -->
+    <section id="splash">
+        <h1>PocketWords📚</h1>
+        <h2>Сделано с любовью, твой Владушка❤️</h2>
+    </section>
+
+    <!-- Main Menu -->
+    <section id="mainMenu" class="hidden mainmenu" tabindex="-1">
+        <h2>💖 Менюшка 💖</h2>
+        <button class="mainBt" id="btnCards">📘 Карточки📘</button>
+        <button class="mainBt" id="btnTest">✅ Тестик ✅</button>
+        <button class="mainBt" id="btnLessons">📙 Уроки📙</button>
+    </section>
+
+    <!-- Lesson Picker Modal -->
+    <div id="lessonPicker" class="modal hidden" tabindex="-1" aria-modal="true" role="dialog">
+        <div class="modal-content">
+            <h3>Какие словечки учим ? 👀</h3>
+            <ul class="lessonbt" id="lessonList"></ul>
+            <div id="noLessons" class="hidden">Нема уроков🤷🏻</div>
+            <button class="backmenubt" id="pickerCancel">Назад👈🏻</button>
+        </div>
+    </div>
+
+    <!-- Cards Screen -->
+    <section id="cards" class="hidden cards-page" tabindex="-1">
+        <h2 id="cardsLessonName"></h2>
+        <div class="card" id="card" tabindex="0">
+            <div class="card-inner" id="cardInner">
+                <div class="card-face" id="front"></div>
+                <div class="card-face card-back" id="back"></div>
+            </div>
+        </div>
+        <div class="card-controls">
+            <button class="prevbt" id="prevBtn" title="Previous card">←</button>
+            <button class="favbt" id="favBtn" title="Toggle favorite">♡</button>
+            <button class="nextbt" id="nextBtn" title="Next card">→</button>
+        </div>
+        <button class="backmenubt" id="cardsBack">Назад👈🏻</button>
+    </section>
+
+    <!-- Test Screen -->
+    <section id="test" class="hidden" tabindex="-1">
+        <h2 id="testLessonName"></h2>
+        <div id="question"></div>
+        <div id="options"></div>
+        <button class="backmenubt" id="testBack">Назад👈🏻</button>
+    </section>
+
+    <!-- Test Result -->
+    <section id="testResult" class="hidden" tabindex="-1">
+        <h2 id="resultLessonName"></h2>
+        <div id="resultSummary"></div>
+        <button class="retrybt" id="retryBtn">Еще попробуем?🤗</button>
+        <button class="backmenubt" id="resultBack">Назад👈🏻</button>
+    </section>
+
+    <!-- Lessons List -->
+    <section id="lessons" class="hidden" tabindex="-1">
+        <h2>Что у нас есть ? 🙋🏼‍♀️</h2>
+        <ul id="lessonsList"></ul>
+        <button class="backmenubt" id="lessonsBack">Назад👈🏻</button>
+    </section>
+
+    <script src="data.js"></script>
+    <script src="app.js"></script>
+</body>
+
+</html>
