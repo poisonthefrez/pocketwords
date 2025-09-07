@@ -7,15 +7,16 @@ body, html {
     background: rgb(255, 164, 240);
     user-select: none;
 }
-button, 
-input, 
-textarea, 
-select {
-  outline: none;
-}
 
 * {
   -webkit-tap-highlight-color: transparent;
+}
+button, input, select, textarea {
+    outline: none;           /* убираем стандартный синий бордер */
+}
+
+button:focus, input:focus, select:focus, textarea:focus {
+    outline: none;           /* форсируем отсутствие */
 }
 
 body::-webkit-scrollbar {
