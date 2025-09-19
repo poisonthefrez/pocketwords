@@ -38,7 +38,7 @@
             <button id="burgerTest" class="mainBt">Тестик✅</button>
             <button id="burgerLessons" class="mainBt">Уроки📙</button>
         </nav>
-    </header>   
+    </header>
 
     <!-- Main Menu -->
     <section id="mainMenu" class="hidden mainmenu" tabindex="-1">
@@ -46,6 +46,7 @@
         <button class="mainBt" id="btnCards">📘 Карточки📘</button>
         <button class="mainBt" id="btnTest">✅ Тестик ✅</button>
         <button class="mainBt" id="btnLessons">📙 Уроки📙</button>
+        <button class="mainBt" id="btnDictation" aria-controls="dictation">💬 Диктантик 💬</button>
     </section>
 
     <!-- Lesson Picker Modal -->
@@ -89,6 +90,30 @@
         <div id="resultSummary"></div>
         <button class="retrybt" id="retryBtn">Еще попробуем?🤗</button>
         <button class="backmenubt" id="resultBack">Назад👈🏻</button>
+    </section>
+
+    <!-- Dictation Screen -->
+    <section id="dictation" class="dictation hidden" aria-labelledby="dictation-title" role="region">
+        <h2 id="dictation-title" class="dictationname">💬 Диктантик 💬</h2>
+
+        <div class="dictword" role="group" aria-label="dictation controls">
+            <button class="playbtn" id="playBtn" title="Прослушать слово" aria-label="Прослушать слово">🔊 Слушать 🔊</button>
+
+            <input type="text" id="dictInput" class="dict-input" placeholder="Пиши тута мили.. ✍🏻"
+                aria-label="Поле ввода слова" autocomplete="off" autocapitalize="off" autocorrect="off" />
+
+            <button class="tipbtn" id="tipBtn" title="Показать ответ" aria-label="Показать ответ">🙋🏼‍♀️ Подсказка 🙋🏼‍♀️</button>
+            <span id="correctWord" class="correct-word hidden" aria-live="polite"></span>
+        </div>
+
+        <div class="dict-controls" role="toolbar" aria-label="Навигация по карточкам">
+            <button class="prevbt" id="prevBtn2" title="Previous card" aria-label="Предыдущее">←</button>
+            <button class="favbt" id="favBtn2" title="Toggle favorite" aria-pressed="false"
+                aria-label="Добавить в избранное">♡</button>
+            <button class="nextbt" id="nextBtn2" title="Next card" aria-label="Следующее">→</button>
+        </div>
+
+        <button class="backmenubt" id="dictBackBtn" aria-controls="mainMenu">Назад 👈🏻</button>
     </section>
 
     <!-- Lessons List -->

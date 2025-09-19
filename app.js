@@ -396,3 +396,221 @@ document.addEventListener('keydown', e => {
 
 // Показываем splash при загрузке
 showScreen('splash');
+
+// ========== DICTATION ==========
+document.addEventListener("DOMContentLoaded", () => {
+    const mainMenu = document.getElementById("mainMenu");
+    const dictation = document.getElementById("dictation");
+    const btnDictation = document.getElementById("btnDictation");
+
+    const dictInput = document.getElementById("dictInput");
+    const playBtn = document.getElementById("playBtn");
+    const tipBtn = document.getElementById("tipBtn");
+    const correctWord = document.getElementById("correctWord");
+
+    const nextBtn2 = document.getElementById("nextBtn2");
+    const prevBtn2 = document.getElementById("prevBtn2");
+    const favBtn2 = document.getElementById("favBtn2");
+
+    const backBtn = document.getElementById("dictBackBtn");
+
+    let currentIndex = 0;
+    let audioInstance = null;
+    let inputCheckTimeout = null;
+
+    // --- localStorage для избранного ---
+    const lessonKey = "dictation_ru"; // уникальный ключ для этого урока
+    let favs = loadFavs(lessonKey);   // загружаем при старте
+
+    function saveFavs(key, favs) {
+        localStorage.setItem('efs_favs_' + key, JSON.stringify(favs));
+    }
+
+    function loadFavs(key) {
+        try { return JSON.parse(localStorage.getItem('efs_favs_' + key)) || []; }
+        catch { return []; }
+    }
+
+    function updateFavBtn() {
+        if (!favBtn2) return;
+        const currentWord = dictationWords[currentIndex].word;
+        if (favs.includes(currentWord)) {
+            favBtn2.classList.add("fav");
+            favBtn2.textContent = "♥";
+        } else {
+            favBtn2.classList.remove("fav");
+            favBtn2.textContent = "♡";
+        }
+    }
+
+    function hasWords() {
+        return typeof dictationWords !== "undefined" && Array.isArray(dictationWords) && dictationWords.length > 0;
+    }
+
+    function showScreen(screen) {
+        document.querySelectorAll("section, main").forEach(s => s.classList.add("hidden"));
+        if (screen) screen.classList.remove("hidden");
+        if (screen === dictation && dictInput) {
+            setTimeout(() => dictInput.focus(), 120);
+        }
+    }
+
+    function loadWord(index) {
+        if (!hasWords()) {
+            console.warn("⚠️ Словарь пуст. Добавьте слова в data.js");
+            if (correctWord) {
+                correctWord.textContent = "Словарь пуст";
+                correctWord.classList.remove("hidden");
+            }
+            return;
+        }
+        currentIndex = (typeof index === "number") ? (index % dictationWords.length + dictationWords.length) % dictationWords.length : 0;
+        dictInput.value = "";
+        dictInput.classList.remove("wrong", "correct");
+        correctWord.classList.add("hidden");
+        correctWord.textContent = "";
+
+        // обновляем кнопку избранного под текущее слово
+        updateFavBtn();
+    }
+
+    function checkInput() {
+        if (!hasWords()) return;
+
+        const currentWord = String(dictationWords[currentIndex].word || "").trim().toLowerCase();
+        const inputValue = String(dictInput.value || "").trim().toLowerCase();
+
+        if (inputValue.length === 0) {
+            dictInput.classList.remove("wrong", "correct");
+            return;
+        }
+
+        if (inputValue === currentWord) {
+            dictInput.classList.remove("wrong");
+            dictInput.classList.add("correct");
+            clearTimeout(inputCheckTimeout);
+            inputCheckTimeout = setTimeout(() => nextWord(), 850);
+        } else {
+            if (!currentWord.startsWith(inputValue)) {
+                dictInput.classList.add("wrong");
+                dictInput.classList.remove("correct");
+            } else {
+                dictInput.classList.remove("wrong");
+                dictInput.classList.remove("correct");
+            }
+        }
+    }
+
+    function stopAudio() {
+        if (audioInstance) {
+            try {
+                audioInstance.pause();
+                audioInstance.currentTime = 0;
+            } catch (e) { }
+            audioInstance = null;
+        }
+    }
+
+    function playWord() {
+        stopAudio();
+        if (!hasWords()) return;
+
+        const item = dictationWords[currentIndex];
+        const audioPath = item && item.audio ? String(item.audio).trim() : "";
+
+        if (audioPath) {
+            audioInstance = new Audio(audioPath);
+            audioInstance.preload = "auto";
+            audioInstance.play().catch(err => {
+                console.warn("Audio playback failed:", err);
+            });
+        } else {
+            console.warn("Нет mp3-файла для слова:", item.word);
+        }
+    }
+
+    function toggleTip() {
+        if (!hasWords()) return;
+        if (correctWord.classList.contains("hidden")) {
+            correctWord.textContent = dictationWords[currentIndex].word || "";
+            correctWord.classList.remove("hidden");
+        } else {
+            correctWord.classList.add("hidden");
+        }
+    }
+
+    function nextWord() {
+        if (!hasWords()) return;
+        currentIndex = (currentIndex + 1) % dictationWords.length;
+        loadWord(currentIndex);
+    }
+
+    function prevWord() {
+        if (!hasWords()) return;
+        currentIndex = (currentIndex - 1 + dictationWords.length) % dictationWords.length;
+        loadWord(currentIndex);
+    }
+
+    // --- Event bindings ---
+    if (btnDictation) {
+        btnDictation.addEventListener("click", () => {
+            showScreen(dictation);
+            currentIndex = 0;
+            loadWord(currentIndex);
+        });
+    }
+
+    if (backBtn) {
+        backBtn.addEventListener("click", () => {
+            stopAudio();
+            showScreen(mainMenu);
+        });
+    }
+
+    if (playBtn) {
+        playBtn.addEventListener("click", () => {
+            playWord();
+        });
+        playBtn.addEventListener("pointerdown", (e) => { e.preventDefault(); }, { passive: true });
+    }
+
+    if (tipBtn) tipBtn.addEventListener("click", toggleTip);
+    if (nextBtn2) nextBtn2.addEventListener("click", nextWord);
+    if (prevBtn2) prevBtn2.addEventListener("click", prevWord);
+
+    if (favBtn2) {
+        favBtn2.addEventListener("click", () => {
+            const currentWord = dictationWords[currentIndex].word;
+            if (favs.includes(currentWord)) {
+                favs = favs.filter(w => w !== currentWord);
+            } else {
+                favs.push(currentWord);
+            }
+            saveFavs(lessonKey, favs);
+            updateFavBtn();
+        });
+    }
+
+    if (dictInput) {
+        dictInput.addEventListener("input", () => {
+            clearTimeout(inputCheckTimeout);
+            inputCheckTimeout = setTimeout(checkInput, 120);
+        }, { passive: true });
+
+        dictInput.addEventListener("keydown", e => {
+            if (e.key === "Enter") {
+                e.preventDefault();
+                checkInput();
+            } else if (e.key === "Escape") {
+                dictInput.value = "";
+                dictInput.classList.remove("wrong", "correct");
+            }
+        });
+    }
+
+    if (hasWords()) {
+        loadWord(currentIndex);
+    } else {
+        console.warn("dictationWords не найден. Убедитесь, что data.js подключен раньше app.js и содержит массив dictationWords.");
+    }
+});

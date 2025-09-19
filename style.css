@@ -85,62 +85,66 @@ section,
 }
 
 #header {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  display: flex;
-  justify-content: flex-end;
-  background: transparent;
-  z-index: 1000;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    display: flex;
+    justify-content: flex-end;
+    background: transparent;
+    z-index: 1000;
 }
 
 #burgerBtn {
-  font-size: 1.5rem;
-  background: rgba(255,255,255,0.15);
-  border: 1px solid rgba(255,255,255,0.2);
-  border-radius: 8px;
-  color: #fff;
-  padding: .3rem .6rem;
-  cursor: pointer;
+    font-size: 1.5rem;
+    background: rgba(255, 255, 255, 0.15);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 8px;
+    color: #fff;
+    padding: .3rem .6rem;
+    cursor: pointer;
 }
 
 #burgerMenu {
-  position: absolute;
-  top: 100%;
-  right: 1rem;
-  display: flex;
-  flex-direction: column;
-  border-radius: 10px;
-  padding: 0.5rem;
-  opacity: 0;
-  transform: translateY(-20px); /* стартовая позиция выше */
-  animation: slideDown 0.4s forwards; /* запускается автоматически */
-} 
-
-@keyframes slideDown {
-  0% {
+    position: absolute;
+    top: 100%;
+    right: 1rem;
+    display: flex;
+    flex-direction: column;
+    border-radius: 10px;
+    padding: 0.5rem;
     opacity: 0;
     transform: translateY(-20px);
-  }
-  100% {
-    opacity: 1;
-    transform: translateY(0);
-  }
+    /* стартовая позиция выше */
+    animation: slideDown 0.4s forwards;
+    /* запускается автоматически */
 }
-#burgerMenu button {
-  margin: 0.4rem;
-  padding: 0.4rem 1rem;
-  border-radius: 8px;
+
+@keyframes slideDown {
+    0% {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 #burgerMenu button {
-  background: rgba(255,255,255,0.15);
-  border: 1px solid rgba(255,255,255,0.2);
-  border-radius: 8px;
-  color: #fff;
-  padding: .5rem 1rem;
-  cursor: pointer;
+    margin: 0.4rem;
+    padding: 0.4rem 1rem;
+    border-radius: 8px;
+}
+
+#burgerMenu button {
+    background: rgba(255, 255, 255, 0.15);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 8px;
+    color: #fff;
+    padding: .5rem 1rem;
+    cursor: pointer;
 }
 
 
@@ -354,6 +358,9 @@ ul {
 }
 
 #favBtn.fav {
+    color: rgb(254, 98, 98);
+}
+#favBtn2.fav {
     color: rgb(254, 98, 98);
 }
 
@@ -578,4 +585,93 @@ li {
 
 .hidden {
     display: none !important;
+}
+
+.dictation {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    text-align: center;
+    color: white;
+    padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+}
+
+.dictword {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: var(--card-bg);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border-radius: 12px;
+    padding: 1rem 1.5rem;
+    margin: 1rem 0;
+    gap: 0.5rem;
+    max-width: 90%;
+}
+
+.dict-input {
+    font-size: 2rem;
+    font-weight: 600;
+    text-align: center;
+    color: white;
+    border: 2px dashed white;
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.06);
+    padding: 0.8rem;
+    transition: all 0.18s ease;
+    outline: none;
+}
+.dict-input::placeholder {
+    color: white;
+    font-family: Comfortaa, sans-serif;
+    font-weight: 400;
+    opacity: 0.6;
+}
+.dict-input:focus {
+    transform: translateY(-2px);
+    box-shadow: 0 2px 20px rgba(0,0,0,0.2);
+    border-style: solid;
+}
+
+.dict-input.wrong {
+    border-color: red;
+    background: var(--accent-wrong);
+}
+
+.dict-input.correct {
+    border-color: #0f0;
+    background: rgba(0, 255, 0, 0.12);
+}
+
+.tipbtn {
+    background: transparent;
+    border: none;
+    font-family: comfortaa, sans-serif;
+    font-size: 1.2rem;
+    color: white;
+    border: 1px solid white;
+    border-radius: 50px;
+    margin-top: 1rem;
+}
+.playbtn {
+    background: transparent;
+    border: none;
+    font-family: comfortaa, sans-serif;
+    font-weight: 600;
+    font-size: 1.2rem;
+    color: white;
+    border: 1px solid white;
+    border-radius: 50px;
+    margin-bottom: 1rem;
+}
+.correct-word {
+    font-family: Comfortaa, sans-serif;
+    font-size: 1.8rem;
+    background-color: rgba(255, 125, 125, 0.2);
+    border-radius: 50px;
+    padding: 1rem;
 }
