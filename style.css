@@ -7,10 +7,38 @@ html {
     color: #222;
     background: rgb(255, 164, 240);
     user-select: none;
+    
+}
+button:focus,
+input:focus,
+select:focus,
+textarea:focus {
+    outline: none !important;
+    box-shadow: none !important;
+}
+
+*:focus {
+    outline: none !important;
+    box-shadow: none !important;
+}
+button,
+input,
+select,
+textarea {
+    -webkit-appearance: none;
+    appearance: none;
 }
 
 * {
     -webkit-tap-highlight-color: transparent;
+    user-select: none;
+}
+
+input, textarea {
+    -webkit-user-select: text;
+    -moz-user-select: text;
+    -ms-user-select: text;
+    user-select: text;
 }
 
 button,
@@ -18,7 +46,6 @@ input,
 select,
 textarea {
     outline: none;
-    /* убираем стандартный синий бордер */
 }
 
 button:focus,
@@ -26,14 +53,11 @@ input:focus,
 select:focus,
 textarea:focus {
     outline: none;
-    /* форсируем отсутствие */
 }
 
 body::-webkit-scrollbar {
     width: 0px;
-    /* убирает полосу */
     background: transparent;
-    /* прозрачный фон */
 }
 
 section,
