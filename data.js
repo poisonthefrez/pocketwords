@@ -41,13 +41,17 @@ const LESSONS = {
     description: 'Family idioms and expressions',
     items: [
       { ru: "Быть главой семьи", en: "Wear trousers in the family" },
+      { ru: "Наткнуться", en: "Come across" },
       { ru: "Чувствовать близость к", en: "Feel close to" },
       { ru: "Быть чьей-то плотью и кровью", en: "Be one’s flesh and blood" },
       { ru: "Иметь уважение к", en: "Have respect for" },
       { ru: "Быть белой вороной", en: "Be the black sheep in the family" },
+      { ru: "Заболеть", en: "Come down with" },
       { ru: "Быть привязанным к", en: "Be attached to" },
       { ru: "Быть светом очей", en: "Be the apple of the eyes" },
+      { ru: "Унаследовать", en: "Come into" },
       { ru: "Стыдиться", en: "Be ashamed of" },
+      { ru: "Придумать", en: "Come up with" },
       { ru: "Спорить о", en: "Argue about" },
       { ru: "Держаться самому по себе", en: "Keep to oneself" },
       { ru: "Вмешиваться в", en: "Interfere in" },
@@ -62,11 +66,7 @@ const LESSONS = {
       { ru: "Возражать против", en: "Object to (doing)" },
       { ru: "Быть популярным среди", en: "Be popular with" },
       { ru: "Действовать на нервы", en: "Get on one’s nerves" },
-      { ru: "Наткнуться", en: "Come across" },
-      { ru: "Заболеть", en: "Come down with" },
-      { ru: "Унаследовать", en: "Come into" },
-      { ru: "Навещать", en: "Come over" },
-      { ru: "Придумать", en: "Come up with" }
+      { ru: "Навещать", en: "Come over" }
     ]
   }
 };
