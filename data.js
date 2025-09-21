@@ -40,11 +40,11 @@ const LESSONS = {
     name: 'Семья 2 👩🏼‍❤️‍👨🏻',
     description: 'Family idioms and expressions',
     items: [
-      { ru: "Быть главой семьи", en: "Wear the trousers (in the family)" },
+      { ru: "Быть главой семьи", en: "Wear trousers in the family" },
       { ru: "Чувствовать близость к", en: "Feel close to" },
       { ru: "Быть чьей-то плотью и кровью", en: "Be one’s flesh and blood" },
       { ru: "Иметь уважение к", en: "Have respect for" },
-      { ru: "Быть белой вороной", en: "Be the black sheep (of the family)" },
+      { ru: "Быть белой вороной", en: "Be the black sheep in the family" },
       { ru: "Быть привязанным к", en: "Be attached to" },
       { ru: "Быть светом очей", en: "Be the apple of the eyes" },
       { ru: "Стыдиться", en: "Be ashamed of" },
@@ -67,15 +67,6 @@ const LESSONS = {
       { ru: "Унаследовать", en: "Come into" },
       { ru: "Навещать", en: "Come over" },
       { ru: "Придумать", en: "Come up with" }
-    ]
-  },
-
-  none: {
-    name: 'Нема 🤷🏻',
-    description: 'Тут будут слова с новых уроков',
-    items: [
-      { ru: "Нетуу", en: "Nopee" },
-      { ru: "Люблю", en: "Love u" }
     ]
   }
 };
