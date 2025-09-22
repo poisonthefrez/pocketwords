@@ -45,7 +45,7 @@ const LESSONS = {
       { ru: "Почувствовать близость к", en: "Feel close to" },
       { ru: "Быть чьей-то плотью и кровью", en: "Be one’s flesh and blood" },
       { ru: "Иметь уважение к", en: "Have respect for" },
-      { ru: "Навещать", en: "Come over" },
+      { ru: "Зайти к", en: "Come over" },
       { ru: "Быть белой вороной", en: "Be the black sheep in the family" },
       { ru: "Заболеть", en: "Come down with" },
       { ru: "Быть привязанным к", en: "Be attached to" },
