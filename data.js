@@ -42,9 +42,10 @@ const LESSONS = {
     items: [
       { ru: "Быть главой семьи", en: "Wear trousers in the family" },
       { ru: "Наткнуться", en: "Come across" },
-      { ru: "Чувствовать близость к", en: "Feel close to" },
+      { ru: "Почувствовать близость к", en: "Feel close to" },
       { ru: "Быть чьей-то плотью и кровью", en: "Be one’s flesh and blood" },
       { ru: "Иметь уважение к", en: "Have respect for" },
+      { ru: "Навещать", en: "Come over" },
       { ru: "Быть белой вороной", en: "Be the black sheep in the family" },
       { ru: "Заболеть", en: "Come down with" },
       { ru: "Быть привязанным к", en: "Be attached to" },
@@ -60,13 +61,10 @@ const LESSONS = {
       { ru: "Задира́ться, нарываться на ссоры", en: "Pick fights" },
       { ru: "Выпендриваться", en: "Show off" },
       { ru: "Переваливать вину на", en: "Put the blame on" },
-      { ru: "Полагаться на", en: "Rely on" },
       { ru: "Быть довольным чем-либо / кем-либо", en: "Be pleased with" },
-      { ru: "Одобрять / не одобрять", en: "Approve of / Disapprove of" },
-      { ru: "Возражать против", en: "Object to (doing)" },
-      { ru: "Быть популярным среди", en: "Be popular with" },
-      { ru: "Действовать на нервы", en: "Get on one’s nerves" },
-      { ru: "Навещать", en: "Come over" }
+      { ru: "Одобрять", en: "Approve of" },
+      { ru: "Возражать против", en: "Object to doing" },
+      { ru: "Быть популярным среди", en: "Be popular with" }
     ]
   }
 };
