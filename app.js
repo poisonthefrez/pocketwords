@@ -44,6 +44,8 @@ function pluralize(count, one, few, many) {
 
 // ========== UI STATE ==========
 let currentScreen = 'splash';
+let lessonPickerMode = null;
+
 function showScreen(id) {
     ['splash', 'mainMenu', 'cards', 'test', 'lessons', 'testResult'].forEach(s => {
         $(s).classList.toggle('hidden', s !== id);
@@ -67,9 +69,9 @@ window.addEventListener('DOMContentLoaded', () => {
     const mainMenu = $('mainMenu');
     const burgerBtn = $('burgerBtn');
     const burgerMenu = $('burgerMenu');
-    const burgerLessons = $('burgerLessons');
     const burgerMain = $('burgerMain');
     const burgerTest = $('burgerTest');
+    const burgerDictionary = $('burgerDictionary');
     const btnCards = $('btnCards');
 
     // Splash fade
@@ -83,41 +85,27 @@ window.addEventListener('DOMContentLoaded', () => {
     burgerBtn.addEventListener('click', () => {
         burgerMenu.style.display = burgerMenu.style.display === 'flex' ? 'none' : 'flex';
     });
+    burgerDictionary.addEventListener('click', () => {openLessonPicker('lessons', 'Словарик'); burgerMenu.style.display = 'none';});
+    burgerMain.addEventListener('click', () => { showScreen('mainMenu'); burgerMenu.style.display = 'none'; });
+    burgerTest.addEventListener('click', () => { openLessonPicker('test', 'Тестик'); burgerMenu.style.display = 'none'; });
 
-    // Главный меню - карточки
-    btnCards.addEventListener('click', () => openLessonPicker('cards'));
-    btnCards.addEventListener('touchstart', (e) => { e.preventDefault(); openLessonPicker('cards'); });
-
-    // Бургер - карточки
-    burgerLessons.addEventListener('click', () => {
-        showLessons();
-        burgerMenu.style.display = 'none';
-    });
-    burgerLessons.addEventListener('touchstart', (e) => {
-        e.preventDefault();
-        showLessons();
-        burgerMenu.style.display = 'none';
-    });
-
-    // Бургер - главная
-    burgerMain.addEventListener('click', () => {
-        showScreen('mainMenu');
-        burgerMenu.style.display = 'none';
-    });
-
-    burgerTest.addEventListener('click', () => {
-        openLessonPicker('test');
-        burgerMenu.style.display = 'none';
-    })
+    btnCards.addEventListener('click', () => openLessonPicker('cards', 'Карточки'));
 });
 
 // ========== MAIN MENU ==========
-$('btnTest').onclick = () => openLessonPicker('test');
+$('btnTest').onclick = (e) => {
+    const title = e.currentTarget.querySelector('.mainBtname').textContent;
+    openLessonPicker('test', title);
+};
+$('btnCards').onclick = (e) => {
+    const title = e.currentTarget.querySelector('.mainBtname').textContent;
+    openLessonPicker('cards', title);
+};
 $('btnLessons').onclick = () => showLessons();
 
-let lessonPickerMode = null;
-function openLessonPicker(mode) {
+function openLessonPicker(mode, title = '') {
     renderLessonList(mode);
+    $('lessonPicker').querySelector('h3').textContent = title;
     showModal('lessonPicker');
     lessonPickerMode = mode;
 }
@@ -136,15 +124,14 @@ function renderLessonList(mode) {
             hideModal('lessonPicker');
             if (mode === 'cards') startCards(key);
             else if (mode === 'test') startTest(key);
+            else if (mode === 'lessons') startLessons(key);
         };
         list.appendChild(li);
     });
 }
 
 $('pickerCancel').onclick = () => hideModal('lessonPicker');
-$('lessonPicker').addEventListener('keydown', e => {
-    if (e.key === 'Escape') hideModal('lessonPicker');
-});
+$('lessonPicker').addEventListener('keydown', e => { if (e.key === 'Escape') hideModal('lessonPicker'); });
 
 // ========== CARDS ==========
 let cardsState = null;
@@ -173,65 +160,24 @@ function renderCard() {
     saveLastIdx(lessonKey, idx);
 }
 
-function flipCard() {
-    cardsState.flipped = !cardsState.flipped;
-    renderCard();
-}
-
-function nextCard() {
-    const lesson = LESSONS[cardsState.lessonKey];
-    cardsState.idx = (cardsState.idx + 1) % lesson.items.length;
-    cardsState.flipped = false;
-    renderCard();
-}
-
-function prevCard() {
-    const lesson = LESSONS[cardsState.lessonKey];
-    cardsState.idx = (cardsState.idx - 1 + lesson.items.length) % lesson.items.length;
-    cardsState.flipped = false;
-    renderCard();
-}
-
-function toggleFav() {
-    const { lessonKey, idx, favs } = cardsState;
-    const i = favs.indexOf(idx);
-    if (i === -1) favs.push(idx);
-    else favs.splice(i, 1);
-    saveFavs(lessonKey, favs);
-    renderCard();
-}
+function flipCard() { cardsState.flipped = !cardsState.flipped; renderCard(); }
+function nextCard() { const lesson = LESSONS[cardsState.lessonKey]; cardsState.idx = (cardsState.idx + 1) % lesson.items.length; cardsState.flipped = false; renderCard(); }
+function prevCard() { const lesson = LESSONS[cardsState.lessonKey]; cardsState.idx = (cardsState.idx - 1 + lesson.items.length) % lesson.items.length; cardsState.flipped = false; renderCard(); }
+function toggleFav() { const { lessonKey, idx, favs } = cardsState; const i = favs.indexOf(idx); i === -1 ? favs.push(idx) : favs.splice(i, 1); saveFavs(lessonKey, favs); renderCard(); }
 
 $('card').onclick = flipCard;
-$('card').addEventListener('keydown', e => {
-    if (e.key === ' ' || e.key === 'Enter') { e.preventDefault(); flipCard(); }
-});
-
+$('card').addEventListener('keydown', e => { if (e.key === ' ' || e.key === 'Enter') { e.preventDefault(); flipCard(); } });
 $('prevBtn').onclick = prevCard;
 $('nextBtn').onclick = nextCard;
 $('favBtn').onclick = toggleFav;
 $('cardsBack').onclick = () => { cardsState = null; showScreen('mainMenu'); };
 
-document.addEventListener('keydown', e => {
-    if (currentScreen === 'cards') {
-        if (e.key === 'ArrowLeft') prevCard();
-        else if (e.key === 'ArrowRight') nextCard();
-        else if (e.key === ' ' || e.key === 'Enter') flipCard();
-        else if (e.key === 'Escape') $('cardsBack').click();
-    }
-});
-
 // ========== TEST ==========
 let testState = null;
-
 function startTest(lessonKey) {
     const lesson = LESSONS[lessonKey];
     if (!lesson || !lesson.items.length) { showScreen('mainMenu'); return; }
-    testState = {
-        lessonKey,
-        order: shuffle([...lesson.items.keys()]),
-        cur: 0,
-        results: []
-    };
+    testState = { lessonKey, order: shuffle(lesson.items.map((_, i) => i)), cur: 0, results: [] };
     $('testLessonName').textContent = lesson.name;
     renderTestQuestion();
     showScreen('test');
@@ -272,7 +218,6 @@ function handleAnswer(chosen, correct, idx) {
         if (b.textContent === correct) b.disabled = true;
         b.classList.toggle('correct', b.textContent === correct);
         b.classList.toggle('wrong', b.textContent === chosen && !isCorrect);
-        b.disabled = true;
     });
     state.results.push({ idx, correct: isCorrect, chosen });
     setTimeout(() => { state.cur += 1; renderTestQuestion(); }, 1000);
@@ -284,7 +229,6 @@ function finishTest() {
     const lesson = LESSONS[state.lessonKey];
     const wrap = $('resultSummary');
     wrap.innerHTML = '';
-
     const total = state.results.length;
     let score = 0;
     const container = document.createElement('div');
@@ -328,289 +272,74 @@ function finishTest() {
 
 $('testBack').onclick = () => { testState = null; showScreen('mainMenu'); };
 $('retryBtn').onclick = () => {
-    // Если тест завершен, запускаем последний урок заново
-    let lastLessonKey = null;
-    if (testState) lastLessonKey = testState.lessonKey;
-    else {
-        const lessonName = $('testLessonName').textContent || $('resultLessonName')?.textContent;
-        if (lessonName) {
-            lastLessonKey = Object.keys(LESSONS).find(k => LESSONS[k].name === lessonName);
-        }
-    }
-
+    const lessonName = $('testLessonName').textContent;
+    const lastLessonKey = Object.keys(LESSONS).find(k => LESSONS[k].name === lessonName);
     if (lastLessonKey) startTest(lastLessonKey);
 };
-
 $('resultBack').onclick = () => showScreen('mainMenu');
 
-document.addEventListener('keydown', e => {
-    if (currentScreen === 'test') {
-        if (['1', '2', '3'].includes(e.key)) {
-            const btns = $('options').children;
-            const idx = parseInt(e.key, 10) - 1;
-            if (btns[idx]) btns[idx].click();
-        } else if (e.key === 'Escape') $('testBack').click();
-    }
-    if (currentScreen === 'testResult' && e.key === 'Escape') $('resultBack').click();
-});
+// ======== LESSONS ========
+let currentLessonKey = null;
 
-// ========== LESSONS ==========
-function showLessons() {
+// Функция для показа словаря урока
+function startLessons(lessonKey) {
+    const lesson = LESSONS[lessonKey];
+    if (!lesson || !lesson.items.length) {
+        showScreen('mainMenu');
+        return;
+    }
+    currentLessonKey = lessonKey;
+    $('dictionaryName').textContent = lesson.name;
+
     const list = $('lessonsList');
+    list.innerHTML = '';
+    lesson.items.forEach((item, index) => {
+        const li = document.createElement('li');
+        li.innerHTML = `<span class="num">${index + 1}</span>
+                        <span class="ru">${item.ru}</span>
+                        <span class="en">${item.en}</span>`;
+        list.appendChild(li);
+    });
+
+    showScreen('lessons');
+}
+
+// Кнопка «Словарь» на главном меню
+$('btnLessons').onclick = () => {
+    openLessonPicker('lessons', 'Словарик');
+};
+
+// Обработка выбора урока из picker
+function renderLessonList(mode) {
+    const list = $('lessonList');
     list.innerHTML = '';
     const keys = Object.keys(LESSONS);
     if (!keys.length) {
-        const li = document.createElement('li'); li.textContent = 'No lessons available.'; list.appendChild(li);
-    } else {
-        keys.forEach(key => {
-            const l = LESSONS[key];
-            const countText = `${l.items.length} ${pluralize(l.items.length, 'слово', 'слова', 'слов')}`;
-            const li = document.createElement('li');
-            li.innerHTML = `
-                <div class="lesson-header">
-                    <strong>${l.name}</strong> — ${l.description} 
-                    <span class="lesson-count">(${countText})</span>
-                </div>
-                <button class="vocab-btn">Словарик 📖</button>
-                <ul class="vocab-list hidden"></ul>
-            `;
-            const btn = li.querySelector('.vocab-btn');
-            const vocabList = li.querySelector('.vocab-list');
-            l.items.forEach(item => {
-                const wordLi = document.createElement('li');
-                wordLi.innerHTML = `<span class="ru">${item.ru}</span> — <span class="en">${item.en}</span>`;
-                vocabList.appendChild(wordLi);
-            });
-            btn.onclick = () => vocabList.classList.toggle('hidden');
-            list.appendChild(li);
-        });
+        $('noLessons').classList.remove('hidden');
+        return;
     }
-    showScreen('lessons');
+    $('noLessons').classList.add('hidden');
+    keys.forEach(key => {
+        const l = LESSONS[key];
+        const li = document.createElement('li');
+        li.innerHTML = `<button data-key="${key}"><strong>${l.name}</strong><br><small>${l.description}</small></button>`;
+        li.querySelector('button').onclick = () => {
+            hideModal('lessonPicker');
+            if (mode === 'cards') startCards(key);
+            else if (mode === 'test') startTest(key);
+            else if (mode === 'lessons') startLessons(key); // <- открываем словарь
+        };
+        list.appendChild(li);
+    });
 }
-$('lessonsBack').onclick = () => showScreen('mainMenu');
+
+// Кнопка назад из словаря
+$('lessonsback').onclick = () => {
+    currentLessonKey = null;
+    showScreen('mainMenu');
+};
 
 // ========== ACCESSIBILITY ==========
 document.addEventListener('keydown', e => {
-    if (currentScreen === 'mainMenu' && e.key === 'Escape') showScreen('splash');
-});
-
-// Показываем splash при загрузке
-showScreen('splash');
-
-// ========== DICTATION ==========
-document.addEventListener("DOMContentLoaded", () => {
-    const mainMenu = document.getElementById("mainMenu");
-    const dictation = document.getElementById("dictation");
-    const btnDictation = document.getElementById("btnDictation");
-
-    const dictInput = document.getElementById("dictInput");
-    const playBtn = document.getElementById("playBtn");
-    const tipBtn = document.getElementById("tipBtn");
-    const correctWord = document.getElementById("correctWord");
-
-    const nextBtn2 = document.getElementById("nextBtn2");
-    const prevBtn2 = document.getElementById("prevBtn2");
-    const favBtn2 = document.getElementById("favBtn2");
-
-    const backBtn = document.getElementById("dictBackBtn");
-
-    let currentIndex = 0;
-    let audioInstance = null;
-    let inputCheckTimeout = null;
-
-    // --- localStorage для избранного ---
-    const lessonKey = "dictation_ru"; // уникальный ключ для этого урока
-    let favs = loadFavs(lessonKey);   // загружаем при старте
-
-    function saveFavs(key, favs) {
-        localStorage.setItem('efs_favs_' + key, JSON.stringify(favs));
-    }
-
-    function loadFavs(key) {
-        try { return JSON.parse(localStorage.getItem('efs_favs_' + key)) || []; }
-        catch { return []; }
-    }
-
-    function updateFavBtn() {
-        if (!favBtn2) return;
-        const currentWord = dictationWords[currentIndex].word;
-        if (favs.includes(currentWord)) {
-            favBtn2.classList.add("fav");
-            favBtn2.textContent = "♥";
-        } else {
-            favBtn2.classList.remove("fav");
-            favBtn2.textContent = "♡";
-        }
-    }
-
-    function hasWords() {
-        return typeof dictationWords !== "undefined" && Array.isArray(dictationWords) && dictationWords.length > 0;
-    }
-
-    function showScreen(screen) {
-        document.querySelectorAll("section, main").forEach(s => s.classList.add("hidden"));
-        if (screen) screen.classList.remove("hidden");
-        if (screen === dictation && dictInput) {
-            setTimeout(() => dictInput.focus(), 120);
-        }
-    }
-
-    function loadWord(index) {
-        if (!hasWords()) {
-            console.warn("⚠️ Словарь пуст. Добавьте слова в data.js");
-            if (correctWord) {
-                correctWord.textContent = "Словарь пуст";
-                correctWord.classList.remove("hidden");
-            }
-            return;
-        }
-        currentIndex = (typeof index === "number") ? (index % dictationWords.length + dictationWords.length) % dictationWords.length : 0;
-        dictInput.value = "";
-        dictInput.classList.remove("wrong", "correct");
-        correctWord.classList.add("hidden");
-        correctWord.textContent = "";
-
-        // обновляем кнопку избранного под текущее слово
-        updateFavBtn();
-    }
-
-    function checkInput() {
-        if (!hasWords()) return;
-
-        const currentWord = String(dictationWords[currentIndex].word || "").trim().toLowerCase();
-        const inputValue = String(dictInput.value || "").trim().toLowerCase();
-
-        if (inputValue.length === 0) {
-            dictInput.classList.remove("wrong", "correct");
-            return;
-        }
-
-        if (inputValue === currentWord) {
-            dictInput.classList.remove("wrong");
-            dictInput.classList.add("correct");
-            clearTimeout(inputCheckTimeout);
-            inputCheckTimeout = setTimeout(() => nextWord(), 850);
-        } else {
-            if (!currentWord.startsWith(inputValue)) {
-                dictInput.classList.add("wrong");
-                dictInput.classList.remove("correct");
-            } else {
-                dictInput.classList.remove("wrong");
-                dictInput.classList.remove("correct");
-            }
-        }
-    }
-
-    function stopAudio() {
-        if (audioInstance) {
-            try {
-                audioInstance.pause();
-                audioInstance.currentTime = 0;
-            } catch (e) { }
-            audioInstance = null;
-        }
-    }
-
-    function playWord() {
-        stopAudio();
-        if (!hasWords()) return;
-
-        const item = dictationWords[currentIndex];
-        const audioPath = item && item.audio ? String(item.audio).trim() : "";
-
-        if (audioPath) {
-            audioInstance = new Audio(audioPath);
-            audioInstance.preload = "auto";
-            audioInstance.play().catch(err => {
-                console.warn("Audio playback failed:", err);
-            });
-        } else {
-            console.warn("Нет mp3-файла для слова:", item.word);
-        }
-    }
-
-    function toggleTip() {
-        if (!hasWords()) return;
-        if (correctWord.classList.contains("hidden")) {
-            correctWord.textContent = dictationWords[currentIndex].word || "";
-            correctWord.classList.remove("hidden");
-        } else {
-            correctWord.classList.add("hidden");
-        }
-    }
-
-    function nextWord() {
-        if (!hasWords()) return;
-        currentIndex = (currentIndex + 1) % dictationWords.length;
-        loadWord(currentIndex);
-    }
-
-    function prevWord() {
-        if (!hasWords()) return;
-        currentIndex = (currentIndex - 1 + dictationWords.length) % dictationWords.length;
-        loadWord(currentIndex);
-    }
-
-    // --- Event bindings ---
-    if (btnDictation) {
-        btnDictation.addEventListener("click", () => {
-            showScreen(dictation);
-            currentIndex = 0;
-            loadWord(currentIndex);
-        });
-    }
-
-    if (backBtn) {
-        backBtn.addEventListener("click", () => {
-            stopAudio();
-            showScreen(mainMenu);
-        });
-    }
-
-    if (playBtn) {
-        playBtn.addEventListener("click", () => {
-            playWord();
-        });
-        playBtn.addEventListener("pointerdown", (e) => { e.preventDefault(); }, { passive: true });
-    }
-
-    if (tipBtn) tipBtn.addEventListener("click", toggleTip);
-    if (nextBtn2) nextBtn2.addEventListener("click", nextWord);
-    if (prevBtn2) prevBtn2.addEventListener("click", prevWord);
-
-    if (favBtn2) {
-        favBtn2.addEventListener("click", () => {
-            const currentWord = dictationWords[currentIndex].word;
-            if (favs.includes(currentWord)) {
-                favs = favs.filter(w => w !== currentWord);
-            } else {
-                favs.push(currentWord);
-            }
-            saveFavs(lessonKey, favs);
-            updateFavBtn();
-        });
-    }
-
-    if (dictInput) {
-        dictInput.addEventListener("input", () => {
-            clearTimeout(inputCheckTimeout);
-            inputCheckTimeout = setTimeout(checkInput, 120);
-        }, { passive: true });
-
-        dictInput.addEventListener("keydown", e => {
-            if (e.key === "Enter") {
-                e.preventDefault();
-                checkInput();
-            } else if (e.key === "Escape") {
-                dictInput.value = "";
-                dictInput.classList.remove("wrong", "correct");
-            }
-        });
-    }
-
-    if (hasWords()) {
-        loadWord(currentIndex);
-    } else {
-        console.warn("dictationWords не найден. Убедитесь, что data.js подключен раньше app.js и содержит массив dictationWords.");
-    }
+    if (currentScreen === 'mainMenu' && e.key === 'Escape') burgerMenu.style.display = 'none';
 });

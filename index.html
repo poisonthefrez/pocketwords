@@ -34,25 +34,41 @@
     <header id="header">
         <button id="burgerBtn" aria-label="Меню">☰</button>
         <nav id="burgerMenu" style="display:none;">
-            <button id="burgerMain" class="mainBt">Менюшка💖</button>
-            <button id="burgerTest" class="mainBt">Тестик✅</button>
-            <button id="burgerLessons" class="mainBt">Уроки📙</button>
+            <button id="burgerMain" class="burgerBt">💖 Менюшка 💖</button>
+            <button id="burgerTest" class="burgerBt">✅ Тестик ✅</button>
+            <button id="burgerDictionary" class="burgerBt">📙 Словарик 📙</button>
+            <button id="burgerGames" class="burgerBt">👾 Еще не добавил.. 👾</button>
         </nav>
     </header>
 
     <!-- Main Menu -->
     <section id="mainMenu" class="hidden mainmenu" tabindex="-1">
         <h2>💖 Менюшка 💖</h2>
-        <button class="mainBt" id="btnCards">📘 Карточки📘</button>
-        <button class="mainBt" id="btnTest">✅ Тестик ✅</button>
-        <button class="mainBt" id="btnLessons">📙 Уроки📙</button>
-        <button class="mainBt" id="btnDictation" aria-controls="dictation">💬 Диктантик 💬</button>
+        <div class="mainmenubuttons">
+            <button class="mainBt" id="btnTest">
+                <img src="icons/test.png" alt="Test">
+                <h3 class="mainBtname">Тестик</h3>
+            </button>
+            <button class="mainBt" id="btnCards">
+                <img src="icons/cards.png" alt="Cards">
+                <h3 class="mainBtname">Карточки</h3>
+            </button>
+            <button class="mainBt" id="btnLessons">
+                <img src="icons/lessons.png" alt="Lessons">
+                <h3 class="mainBtname">Словарик</h3>
+            </button>
+            <button class="mainBt" id="btnGames">
+                <img src="icons/games.png" alt="Games">
+                <h3 class="mainBtname">Еще не добавил..</h3>
+            </button>
+        </div>
+
     </section>
 
     <!-- Lesson Picker Modal -->
     <div id="lessonPicker" class="modal hidden" tabindex="-1" aria-modal="true" role="dialog">
         <div class="modal-content">
-            <h3>Какие словечки учим ? 👀</h3>
+            <h3></h3>
             <ul class="lessonbt" id="lessonList"></ul>
             <div id="noLessons" class="hidden">Нема уроков🤷🏻</div>
             <button class="backmenubt" id="pickerCancel">Назад👈🏻</button>
@@ -92,35 +108,11 @@
         <button class="backmenubt" id="resultBack">Назад👈🏻</button>
     </section>
 
-    <!-- Dictation Screen -->
-    <section id="dictation" class="dictation hidden" aria-labelledby="dictation-title" role="region">
-        <h2 id="dictation-title" class="dictationname">💬 Диктантик 💬</h2>
-
-        <div class="dictword" role="group" aria-label="dictation controls">
-            <button class="playbtn" id="playBtn" title="Прослушать слово" aria-label="Прослушать слово">🔊 Слушать 🔊</button>
-
-            <input type="text" id="dictInput" class="dict-input" placeholder="Пиши тута мили.. ✍🏻"
-                aria-label="Поле ввода слова" autocomplete="off" autocapitalize="off" autocorrect="off" />
-
-            <button class="tipbtn" id="tipBtn" title="Показать ответ" aria-label="Показать ответ">🙋🏼‍♀️ Подсказка 🙋🏼‍♀️</button>
-            <span id="correctWord" class="correct-word hidden" aria-live="polite"></span>
-        </div>
-
-        <div class="dict-controls" role="toolbar" aria-label="Навигация по карточкам">
-            <button class="prevbt" id="prevBtn2" title="Previous card" aria-label="Предыдущее">←</button>
-            <button class="favbt" id="favBtn2" title="Toggle favorite" aria-pressed="false"
-                aria-label="Добавить в избранное">♡</button>
-            <button class="nextbt" id="nextBtn2" title="Next card" aria-label="Следующее">→</button>
-        </div>
-
-        <button class="backmenubt" id="dictBackBtn" aria-controls="mainMenu">Назад 👈🏻</button>
-    </section>
-
     <!-- Lessons List -->
-    <section id="lessons" class="hidden" tabindex="-1">
-        <h2>Что у нас есть ? 🙋🏼‍♀️</h2>
+    <section id="lessons" class="hidden lessons" tabindex="-1">
+        <h2 id="dictionaryName"></h2>
         <ul id="lessonsList"></ul>
-        <button class="backmenubt" id="lessonsBack">Назад👈🏻</button>
+        <button class="backmenubt" id="lessonsback">Назад👈🏻</button>
     </section>
 
     <script src="data.js"></script>
