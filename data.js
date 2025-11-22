@@ -101,5 +101,41 @@ const LESSONS = {
         { ru: "Вздохнуть", en: "Sigh" },
         { ru: "Стонать", en: "Groan" }
       ]
+    },
+      bodyLanguageAndBehaviour: {
+      name: 'Жесты и Поведение 🤌🏻',
+      description: 'Physical reactions, gestures, emotions and social behaviour.',
+      items: [
+        { ru: "Покачать головой", en: "Shake the head" },
+        { ru: "Сжать кулаки", en: "Clench the fists" },
+        { ru: "Пожать плечами", en: "Shrug the shoulders" },
+        { ru: "Сложить руки", en: "Fold the arms" },
+        { ru: "Покраснеть от смущения", en: "Blush with embarrassment" },
+        { ru: "Топнуть ногой", en: "Stamp the feet" },
+        { ru: "Дрожать в страхе", en: "Tremble in fear" },
+        { ru: "Стучать пальцами", en: "Tap the finger" },
+        { ru: "Совершить преступление", en: "Commit a crime" },
+        { ru: "Агрессивная толпа", en: "Rough crowd" },
+        { ru: "Задираться, придираться", en: "Pick on" },
+        { ru: "Соответствовать", en: "Fit in with" },
+        { ru: "Убеждать", en: "Persuade" },
+        { ru: "Разубеждать", en: "Dissuade" },
+        { ru: "Сдаться", en: "Give in" },
+        { ru: "Сопротивляться", en: "Resist" },
+        { ru: "Придумать 101 причину", en: "Think of a hundred and one reasons" },
+    
+        { ru: "Быть неуверенным", en: "Be in two minds" },
+        { ru: "Быть в растерянности", en: "Be at sixes and sevens" },
+        { ru: "Приютить (в гости)", en: "Put up" },
+        { ru: "Унижать, обзывать", en: "Put down" },
+        { ru: "Надевать", en: "Put on" },
+        { ru: "Откладывать", en: "Put off" },
+        { ru: "Мириться с", en: "Put up with" },
+        { ru: "Влияние на", en: "Influence on" },
+        { ru: "Обращать внимание на", en: "Pay attention to" },
+        { ru: "Производить впечатление на", en: "Make an impression on" },
+        { ru: "Настаивать на", en: "Insist on" },
+        { ru: "Хвастаться о", en: "Boast about" }
+      ]
     }
 };
